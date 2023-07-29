@@ -21,3 +21,6 @@ __pycache__/
 
 # log file
 *.log
+
+#intermidate file produced by emacs
+*~
