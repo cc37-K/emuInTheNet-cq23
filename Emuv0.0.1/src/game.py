@@ -15,11 +15,8 @@ class Game:
     - current_turn_message: a copy of the message received this turn. It will be updated everytime `read_next_turn_data`
         is called and will be available to be used in `respond_to_turn` if needed.
     """
-    def __init__(self):
-        print("log Test")
-        self.logger = emu_log.EmuLog()
-        self.logger.log("Game Object init")
 
+    def __init__(self):
         tank_id_message: dict = comms.read_message()
         self.tank_id = tank_id_message["message"]["your-tank-id"]
 
@@ -60,9 +57,6 @@ class Game:
         self.width = biggest_x
         self.height = biggest_y
 
-
-
-
     def read_next_turn_data(self):
         """
         It's our turn! Read what the game has sent us and update the game info.
@@ -88,10 +82,6 @@ class Game:
         # new powerup is now spawned, etc.
         self.objects.update(self.current_turn_message["message"]["updated_objects"])
 
-        # Log the world
-        print("Read")
-        self.logger.log('Read')
-
         return True
 
     def respond_to_turn(self):
@@ -101,14 +91,10 @@ class Game:
 
         # Write your code here... For demonstration, this bot just shoots randomly every turn.
 
-        # Log the world
-        print("Respond log")
-        self.logger.log('Respond')
-
         comms.post_message({
             "shoot": random.uniform(0, random.randint(1, 360))
         })
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     game = Game()
