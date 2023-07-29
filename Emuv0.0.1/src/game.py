@@ -19,7 +19,7 @@ class Game:
     def __init__(self):
         tank_id_message: dict = comms.read_message()
         self.tank_id = tank_id_message["message"]["your-tank-id"]
-
+        self.enemy_tank_id = tank_id_message["message"]["enemy-tank-id"]
         self.current_turn_message = None
 
         # We will store all game objects here
@@ -90,9 +90,10 @@ class Game:
         """
 
         # Write your code here... For demonstration, this bot just shoots randomly every turn.
-
+        enemy_position = self.objects[self.enemy_tank_id]["position"]
         comms.post_message({
-            "shoot": random.uniform(0, random.randint(1, 360))
+            "shoot": random.uniform(0, random.randint(1, 360)),
+            "Path": enemy_position
         })
 
 
