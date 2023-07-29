@@ -4,6 +4,7 @@ import comms
 from object_types import ObjectTypes
 import navigator
 import sys
+import Shooter
 
 class Game:
     """
@@ -60,6 +61,11 @@ class Game:
 
         # Initialise the navigator
         self.nav = navigator.Navigator(self)
+        self.shooter = Shooter.Shooter(self)
+        self.execute_move = 1
+
+    def get_my_tank(self):
+        return self.objects[self.tank_id]
 
     def read_next_turn_data(self):
         """
@@ -92,15 +98,17 @@ class Game:
         """
         This is where you should write your bot code to process the data and respond to the game.
         """
+        # alternate shooting and moving
+        if self.execute_move != 0:
+            comms.post_message(self.nav.post_move())
+            self.execute_move = 0
+            return
+        else:
+            comms.post_message(self.shooter.aimed_shoot())
+            self.execute_move = 1
+            return
 
-        # Write your code here... For demonstration, this bot just shoots randomly every turn.
-        enemy_position = self.objects[self.enemy_tank_id]["position"]
-        # comms.post_message({
-        #     "shoot": random.uniform(0, random.randint(1, 360)),
-        #     "Path": enemy_position
-        # })
-        response = self.nav.post_move()
-        comms.post_message(response)
+
 
 
 if __name__ == "__main__":
