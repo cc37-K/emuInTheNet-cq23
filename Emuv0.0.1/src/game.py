@@ -1,5 +1,5 @@
 import random
-
+import logging
 import comms
 from object_types import ObjectTypes
 
@@ -16,6 +16,9 @@ class Game:
         is called and will be available to be used in `respond_to_turn` if needed.
     """
     def __init__(self):
+        self.logger = logging.EmuLog()
+        self.logger.log("Game Object init") 
+        print("Game Object init")
         tank_id_message: dict = comms.read_message()
         self.tank_id = tank_id_message["message"]["your-tank-id"]
 
