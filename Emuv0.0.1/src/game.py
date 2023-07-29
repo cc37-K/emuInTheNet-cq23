@@ -2,7 +2,8 @@ import random
 import logging as emu_log
 import comms
 from object_types import ObjectTypes
-
+import navigator
+import sys
 
 class Game:
     """
@@ -57,6 +58,9 @@ class Game:
         self.width = biggest_x
         self.height = biggest_y
 
+        # Initialise the navigator
+        self.nav = navigator.Navigator(self)
+
     def read_next_turn_data(self):
         """
         It's our turn! Read what the game has sent us and update the game info.
@@ -91,11 +95,13 @@ class Game:
 
         # Write your code here... For demonstration, this bot just shoots randomly every turn.
         enemy_position = self.objects[self.enemy_tank_id]["position"]
-        comms.post_message({
-            "shoot": random.uniform(0, random.randint(1, 360)),
-            "Path": enemy_position
-        })
+        # comms.post_message({
+        #     "shoot": random.uniform(0, random.randint(1, 360)),
+        #     "Path": enemy_position
+        # })
+        response = self.nav.post_move()
+        comms.post_message(response)
 
 
 if __name__ == "__main__":
-    game = Game()
+     game = Game()

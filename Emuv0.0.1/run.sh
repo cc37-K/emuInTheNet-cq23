@@ -1,1 +1,2 @@
-python src/main.py
+cq23 cleanup
+cq23 run map=empty.map
