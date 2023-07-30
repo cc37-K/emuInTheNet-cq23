@@ -1,10 +1,10 @@
-import random
-import logging as emu_log
+import math
 import comms
 from object_types import ObjectTypes
 import navigator
 import sys
 import Shooter
+
 
 class Game:
     """
@@ -19,6 +19,13 @@ class Game:
     """
 
     def __init__(self):
+        self.last_path_requested = None
+
+        # Initialise the navigator
+        self.nav = navigator.Navigator(self)
+        self.shooter = Shooter.Shooter(self)
+        self.execute_move = 1
+
         tank_id_message: dict = comms.read_message()
         self.tank_id = tank_id_message["message"]["your-tank-id"]
         self.enemy_tank_id = tank_id_message["message"]["enemy-tank-id"]
@@ -59,11 +66,6 @@ class Game:
         self.width = biggest_x
         self.height = biggest_y
 
-        # Initialise the navigator
-        self.nav = navigator.Navigator(self)
-        self.shooter = Shooter.Shooter(self)
-        self.execute_move = 1
-
     def get_my_tank(self):
         return self.objects[self.tank_id]
 
@@ -98,18 +100,21 @@ class Game:
         """
         This is where you should write your bot code to process the data and respond to the game.
         """
-        # alternate shooting and moving
-        if self.execute_move != 0:
-            comms.post_message(self.nav.post_move())
-            self.execute_move = 0
-            return
-        else:
-            comms.post_message(self.shooter.aimed_shoot())
-            self.execute_move = 1
-            return
 
+        enemy_tank = self.objects[self.enemy_tank_id]
 
+        enemy_tank_position = enemy_tank["position"]
+
+        emu_response = {}
+
+        if self.last_path_requested is None or self.last_path_requested != enemy_tank_position:
+            emu_response = self.nav.get_move()
+            self.last_path_requested = enemy_tank_position
+
+        emu_response.update(self.shooter.aimed_shoot())
+
+        comms.post_message(emu_response)
 
 
 if __name__ == "__main__":
-     game = Game()
+    game = Game()
